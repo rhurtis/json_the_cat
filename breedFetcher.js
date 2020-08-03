@@ -1,35 +1,37 @@
 const request = require('request');
-
-let commandLineInput = process.argv.slice(2);
-
-request(`https://api.thecatapi.com/v1/breeds/search?q=${commandLineInput}`,(err,result,body) => {
+const breedName = process.argv[2];
+const fetchBreedDescription = function() {
+   request(`https://api.thecatapi.com/v1/breeds/search?q=${breedName}`,(err,result,body) => {
   
-  if (err !== null) {
-    console.log('The URL is broken, it may contain a typo.');
-  }
+    if (err !== null) {
+      console.log('The URL is broken, it may contain a typo.');
+      return 'The URL is broken, it may contain a typo.';
+    }
+    
+    body = JSON.parse(body);
+    let descr = body[0];
+    //let desc = descr['description']
+    err = JSON.parse(err);
   
-  body = JSON.parse(body);
-  let object1 = body[0];
-  err = JSON.parse(err);
+  
+    if (descr === undefined) {
+      console.log('That breed can not be found.');
+      return 'That breed can not be found.'
+    } else  {
+      console.log(`Description: ${descr['description']}`);
+      return descr['description'];
+    }
+  
+  
+  
+  
+  });
+};
 
-
-  if (object1 === undefined) {
-    console.log('That breed can not be found.');
-  } else  {
-    console.log(`Description: ${object1['description']}`);
-  }
-
-
-
-
-});
-
-
-
-
+console.log(fetchBreedDescription());
+module.exports = { fetchBreedDescription };
 
 // use the cmdline input for the name and search the object
 // concatenate the string from the id to the request above in order to search for the cat.
-
 
 
